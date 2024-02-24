@@ -60,36 +60,36 @@ class DietRecommendationView(APIView):
 
 
 
-# class FoodClassificationView(generics.CreateAPIView):
-#     queryset = FoodImageModel.objects.all()
-#     serializer_class = FoodImageSerializer
+class FoodClassificationView(generics.CreateAPIView):
+    queryset = FoodImageModel.objects.all()
+    serializer_class = FoodImageSerializer
 
-#     def create(self, request):
-#         try:
-#             image_file = request.FILES.get('image')            
-#             if image_file:
-#                 # Load and preprocess the image
-#                 image_file_data = BytesIO(image_file.read())
-#                 image = load_img(image_file_data, target_size=(224, 224))
-#                 image = img_to_array(image)
-#                 image = np.expand_dims(image, axis=0)
+    def create(self, request):
+        try:
+            image_file = request.FILES.get('image')            
+            if image_file:
+                # Load and preprocess the image
+                image_file_data = BytesIO(image_file.read())
+                image = load_img(image_file_data, target_size=(224, 224))
+                image = img_to_array(image)
+                image = np.expand_dims(image, axis=0)
 
-#                 # Predict the class of the image
-#                 result = np.argmax(food_image_model.predict(image), axis=1)
-#                 predicted_food_item = get_predicted_food_item(result)
+                # Predict the class of the image
+                result = np.argmax(food_image_model.predict(image), axis=1)
+                predicted_food_item = get_predicted_food_item(result)
                 
-#                 # Save the result to the database or perform any other actions
-#                 return Response({"status": "success", "predicted_class": int(result[0]), "foodname": predicted_food_item}, status=status.HTTP_200_OK)
-#             else:
-#                 return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
-#         except Exception as e:
-#             print(f"Error: {e}")
-#             return Response({'error': 'An error occurred while processing the image'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                # Save the result to the database or perform any other actions
+                return Response({"status": "success", "predicted_class": int(result[0]), "foodname": predicted_food_item}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f"Error: {e}")
+            return Response({'error': 'An error occurred while processing the image'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# def get_predicted_food_item(result):
-#     labels_path = 'serviceapp/data/foodimagelabels.txt'
-#     with open(labels_path, 'r') as file:
-#         food_items = file.read().splitlines()
-#         # Find the Food name according to the labels
-#         predicted_food_item = food_items[result[0]-1] if 0 <= result[0] < len(food_items) else "Unknown" 
-#     return predicted_food_item
+def get_predicted_food_item(result):
+    labels_path = 'serviceapp/data/foodimagelabels.txt'
+    with open(labels_path, 'r') as file:
+        food_items = file.read().splitlines()
+        # Find the Food name according to the labels
+        predicted_food_item = food_items[result[0]-1] if 0 <= result[0] < len(food_items) else "Unknown" 
+    return predicted_food_item
