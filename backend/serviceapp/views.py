@@ -14,6 +14,15 @@ import re
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from io import BytesIO
 import os
+from dotenv import load_dotenv
+import google.generativeai as genai
+from PIL import Image
+
+# loading all the enivroment variables and configure the api
+
+load_dotenv()
+genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
+
 
 # Load ML models during Django app initialization
 diet_model = joblib.load('serviceapp/PredictedModel/model.joblib')
@@ -57,39 +66,47 @@ class DietRecommendationView(APIView):
             return Response({'error_messages': required_messages}, status=status.HTTP_400_BAD_REQUEST)
 
 
+#Food image Classification
+class FoodClassificationView(APIView):
+    def post(self, request): 
+        serializer = FoodImageSerializer(data=request.data)
+        if serializer.is_valid():
+            if 'image' in serializer.validated_data:
+                uploadedImage = serializer.validated_data['image']
+                bytesdata = BytesIO(uploadedImage.read()).read()
+                image_parts = [
+                    {
+                        "mime_type": uploadedImage.content_type,
+                        "data": bytesdata
+                    }
+                ]
 
+                input_prompt = """
+                You are an expert in nutitionist where need to see the food items from the image
+                and predict which food is that  and  calculate the total calories, also provide the details of every food items with calories intake
+                            is below format
 
-
-class FoodClassificationView(generics.CreateAPIView):
-    queryset = FoodImageModel.objects.all()
-    serializer_class = FoodImageSerializer
-
-    def create(self, request):
-        try:
-            image_file = request.FILES.get('image')            
-            if image_file:
-                # Load and preprocess the image
-                image_file_data = BytesIO(image_file.read())
-                image = load_img(image_file_data, target_size=(224, 224))
-                image = img_to_array(image)
-                image = np.expand_dims(image, axis=0)
-
-                # Predict the class of the image
-                result = np.argmax(food_image_model.predict(image), axis=1)
-                predicted_food_item = get_predicted_food_item(result)
+                            1. Item 1 - no of calories
+                            2. Item 2 - no of calories
+                            ----
+                            ----
+                            
+                        Finally you can also mention whether the food is healthy or not and also
+                        mention the
+                        percentage split of the ratio of carbohydrates,fats,fibers,suger, and other important 
+                        things required in our diet
+                        
+                        if the image if not food give the response like please give us the foods contained images
+                """
                 
-                # Save the result to the database or perform any other actions
-                return Response({"status": "success", "predicted_class": int(result[0]), "foodname": predicted_food_item}, status=status.HTTP_200_OK)
+                response = get_gemini_response(input_prompt, image_parts)
+                return Response({"response": response})
             else:
-                return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print(f"Error: {e}")
-            return Response({'error': 'An error occurred while processing the image'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response({"error": "Image field is required"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def get_predicted_food_item(result):
-    labels_path = 'serviceapp/data/foodimagelabels.txt'
-    with open(labels_path, 'r') as file:
-        food_items = file.read().splitlines()
-        # Find the Food name according to the labels
-        predicted_food_item = food_items[result[0]-1] if 0 <= result[0] < len(food_items) else "Unknown" 
-    return predicted_food_item
+# Function for The Gemini Pro vison Intigrations
+def get_gemini_response(input_prompt, image):
+    model = genai.GenerativeModel('gemini-pro-vision')
+    response = model.generate_content([input_prompt, image[0]])
+    return response.text
