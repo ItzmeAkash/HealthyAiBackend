@@ -166,3 +166,4 @@ media
 #model and data
 data
 PredictedModel
+.env

@@ -26,8 +26,9 @@ genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 
 # Load ML models during Django app initialization
 diet_model = joblib.load('serviceapp/PredictedModel/model.joblib')
-food_image_model = load_model('serviceapp/PredictedModel/foodimagemodel.h5')
+# food_image_model = load_model('serviceapp/PredictedModel/foodimagemodel.h5')
 
+# Food Diet Recommendation
 class DietRecommendationView(APIView):
     def post(self, request):
         try:
