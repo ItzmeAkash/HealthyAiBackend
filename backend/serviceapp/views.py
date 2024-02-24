@@ -71,9 +71,11 @@ class DietRecommendationView(APIView):
 class FoodClassificationView(APIView):
     def post(self, request): 
         serializer = FoodImageSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             if 'image' in serializer.validated_data:
+                serializer.save()
                 uploadedImage = serializer.validated_data['image']
+                
                 bytesdata = BytesIO(uploadedImage.read()).read()
                 image_parts = [
                     {
@@ -81,7 +83,7 @@ class FoodClassificationView(APIView):
                         "data": bytesdata
                     }
                 ]
-
+   
                 input_prompt = """
                 You are an expert in nutitionist where need to see the food items from the image
                 and predict which food is that  and  calculate the total calories, also provide the details of every food items with calories intake
