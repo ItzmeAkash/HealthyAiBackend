@@ -2,7 +2,9 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
-from .serializer import DietRecomSerializer, FoodImageSerializer
+from .serializer import (DietRecomSerializer, 
+                         FoodImageSerializer,
+                         RecipeSerializer)
 from .foodrecomd import FoodRecommendation
 from .models import FoodImageModel
 from keras.models import load_model
@@ -113,3 +115,33 @@ def get_gemini_response(input_prompt, image):
     model = genai.GenerativeModel('gemini-pro-vision')
     response = model.generate_content([input_prompt, image[0]])
     return response.text
+
+
+#Food Recipe Generator
+
+class FoodRecipeGeneratorView(APIView):
+    def post(self,request):
+        serializer  = RecipeSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            inputs = serializer.validated_data['recipes']
+            input_prompt = """
+                You are a culinary expert tasked with providing recipes for various dishes.
+                When given a list of ingredients, you will provide the dish name, 
+                the quantity of ingredients to use, and the instructions.
+                Please note that you should only respond to inputs related to food.
+                If a non-food-related input is provided, please prompt the user to enter a food-related input.
+                
+                """
+            
+            response = get_gemini_response(input_prompt,inputs)
+            serializer.save()
+            return Response({'Response': response})
+            
+
+def get_gemini_response(input_prompt, ingredients_list):
+    formatted_input = ", ".join(ingredients_list)
+    #Functions to load Gemini Pro 
+    model = genai.GenerativeModel('gemini-pro')
+    response = model.generate_content([input_prompt,formatted_input])
+    return response.text
+            

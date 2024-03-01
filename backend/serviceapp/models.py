@@ -30,7 +30,6 @@ class DietRecommendation(models.Model):
         return str(self.user)
 
 # Model for Food Image Classification
-
 class FoodImageModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='food_images')
     image = models.ImageField(upload_to='images/', blank=True, null=True)
@@ -38,4 +37,16 @@ class FoodImageModel(models.Model):
 
     def __str__(self):
         return  self.user.first_name
+    
+#Model for Recipe Generator
+class RecipeModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipe')
+    recipes =models.JSONField()
+    
+    
+    def __str__(self):
+        return self.user.first_name
+    
+    
+
     

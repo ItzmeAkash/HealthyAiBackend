@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import DietRecommendation,FoodImageModel
+from .models import (DietRecommendation,
+                     FoodImageModel,
+                     RecipeModel)
 
 # Diet Recommendation Serializer
 class DietRecomSerializer(serializers.ModelSerializer):
@@ -24,3 +26,11 @@ class FoodImageSerializer(serializers.ModelSerializer):
         model = FoodImageModel
         fields = ('__all__')
        
+
+# Recipe Generator 
+class RecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeModel
+        fields = ('__all__')
+        
+        
