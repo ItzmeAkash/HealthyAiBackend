@@ -72,11 +72,9 @@ class FoodClassificationView(APIView):
     def post(self, request): 
         serializer = FoodImageSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            
             if 'image' in serializer.validated_data:
-                serializer.save()
-                uploadedImage = serializer.validated_data['image']
                 
+                uploadedImage = serializer.validated_data['image']
                 bytesdata = BytesIO(uploadedImage.read()).read()
                 image_parts = [
                     {
@@ -104,6 +102,7 @@ class FoodClassificationView(APIView):
                 """
                 
                 response = get_gemini_response(input_prompt, image_parts)
+                serializer.save()
                 return Response({"response": response})
             else:
                 return Response({"error": "Image field is required"}, status=status.HTTP_400_BAD_REQUEST)
