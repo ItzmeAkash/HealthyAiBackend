@@ -19,14 +19,15 @@ import google.generativeai as genai
 from PIL import Image
 
 # loading all the enivroment variables and configure the api
-
 load_dotenv()
 genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 
 
 # Load ML models during Django app initialization
 diet_model = joblib.load('serviceapp/PredictedModel/model.joblib')
+
 # food_image_model = load_model('serviceapp/PredictedModel/foodimagemodel.h5')
+
 
 # Food Diet Recommendation
 class DietRecommendationView(APIView):
@@ -66,12 +67,12 @@ class DietRecommendationView(APIView):
                     required_messages[field] = message
             return Response({'error_messages': required_messages}, status=status.HTTP_400_BAD_REQUEST)
 
-
 #Food image Classification
 class FoodClassificationView(APIView):
     def post(self, request): 
         serializer = FoodImageSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
+            
             if 'image' in serializer.validated_data:
                 serializer.save()
                 uploadedImage = serializer.validated_data['image']
@@ -83,9 +84,9 @@ class FoodClassificationView(APIView):
                         "data": bytesdata
                     }
                 ]
-   
+                
                 input_prompt = """
-                You are an expert in nutitionist where need to see the food items from the image
+                You are an expert in nutritionist where need to see the food items from the image
                 and predict which food is that  and  calculate the total calories, also provide the details of every food items with calories intake
                             is below format
 
@@ -96,7 +97,7 @@ class FoodClassificationView(APIView):
                             
                         Finally you can also mention whether the food is healthy or not and also
                         mention the
-                        percentage split of the ratio of carbohydrates,fats,fibers,suger, and other important 
+                        percentage split of the ratio of carbohydrates,fats,fibers,sugar, and other important 
                         things required in our diet
                         
                         if the image if not food give the response like please give us the foods contained images
@@ -108,7 +109,7 @@ class FoodClassificationView(APIView):
                 return Response({"error": "Image field is required"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Function for The Gemini Pro vison Intigrations
+# Function for The Gemini Pro vision Integrations
 def get_gemini_response(input_prompt, image):
     model = genai.GenerativeModel('gemini-pro-vision')
     response = model.generate_content([input_prompt, image[0]])
