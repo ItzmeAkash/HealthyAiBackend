@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from PIL import Image
 
+
 # loading all the enivroment variables and configure the api
 load_dotenv()
 genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
@@ -33,6 +34,8 @@ diet_model = joblib.load('serviceapp/PredictedModel/model.joblib')
 
 # Food Diet Recommendation
 class DietRecommendationView(APIView):
+
+    
     def post(self, request):
         try:
             # Load the Dataset
@@ -118,7 +121,6 @@ def get_gemini_response(input_prompt, image):
 
 
 #Food Recipe Generator
-
 class FoodRecipeGeneratorView(APIView):
     def post(self,request):
         serializer  = RecipeSerializer(data=request.data)
@@ -136,9 +138,11 @@ class FoodRecipeGeneratorView(APIView):
             response = get_gemini_response(input_prompt,inputs)
             serializer.save()
             return Response({'Response': response})
+  
             
-
+# Function to Intigrate with gemini pro
 def get_gemini_response(input_prompt, ingredients_list):
+    
     formatted_input = ", ".join(ingredients_list)
     #Functions to load Gemini Pro 
     model = genai.GenerativeModel('gemini-pro')
