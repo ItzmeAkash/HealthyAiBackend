@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser,PermissionsMixin
 from .manager import UserManager
 from django.utils.translation import gettext_lazy as _
-
+from rest_framework_simplejwt.tokens import RefreshToken
 # User Registeration  Model.
 class User(AbstractUser,PermissionsMixin):
     first_name = models.CharField(max_length=100, verbose_name = _("firstname"))
@@ -30,10 +30,10 @@ class User(AbstractUser,PermissionsMixin):
     def get_full_name(self):
         return f"{self.first_name}{self.last_name}"
     
-    # def token(self):
-    #    refresh = RefreshToken.for_user(self)
-    #    return {
-    #        'refresh': str(refresh),
-    #        'access': str(refresh.access_token)
-    #    }
+    def token(self):
+       refresh = RefreshToken.for_user(self)
+       return {
+           'refresh': str(refresh),
+           'access': str(refresh.access_token)
+       }
 

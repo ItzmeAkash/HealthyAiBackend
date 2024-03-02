@@ -37,7 +37,6 @@ class UserRegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
    
 
-     
 class LoginUserView(APIView):
     def post(self, request):
         # Check if 'email' and 'password' keys are present in request.data
@@ -54,19 +53,15 @@ class LoginUserView(APIView):
 
         if not user.check_password(password):
             raise AuthenticationFailed('Incorrect password')
-
-        payload = {
-            'id': user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-        }
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        
+        tokens = user.token() 
 
         response = Response()
-        response.set_cookie(key='jwt', value=token, httponly=True)
+        response.set_cookie(key='jwt', value=tokens['access'], httponly=True)
         response.data = {
             'message': 'Success',
-            'jwt': token
+            'access_token': tokens['access'],
+            'refresh_token': tokens['refresh']
         }
         return response
     

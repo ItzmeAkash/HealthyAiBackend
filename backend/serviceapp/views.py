@@ -19,6 +19,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 from PIL import Image
+from rest_framework.permissions import IsAuthenticated
 
 
 # loading all the enivroment variables and configure the api
@@ -34,7 +35,7 @@ diet_model = joblib.load('serviceapp/PredictedModel/model.joblib')
 
 # Food Diet Recommendation
 class DietRecommendationView(APIView):
-
+    permission_classes = [IsAuthenticated]
     
     def post(self, request):
         try:
