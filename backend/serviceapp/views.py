@@ -38,12 +38,20 @@ class DietRecommendationView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
+        # Get the user Id of the authenticated User
+        user_id = request.user.id
+        
+        #Add the user ID to the request data
+        request_data = {
+            'user': user_id,
+            **request.data
+        }
         try:
             # Load the Dataset
             df = pd.read_csv('serviceapp/data/data.csv')
             
             # Process request data with serializer
-            serializer = DietRecomSerializer(data=request.data)
+            serializer = DietRecomSerializer(data=request_data)
             serializer.is_valid(raise_exception=True)
             user = serializer.save()
             filtered_data = serializer.validated_data.copy()
@@ -75,8 +83,13 @@ class DietRecommendationView(APIView):
 
 #Food image Classification
 class FoodClassificationView(APIView):
+    
+    permission_classes = [IsAuthenticated]
     def post(self, request): 
-        serializer = FoodImageSerializer(data=request.data)
+        user_id = request.user.id
+        request_data = request.data.copy()
+        request_data['user'] = user_id
+        serializer = FoodImageSerializer(data=request_data)
         if serializer.is_valid(raise_exception=True):
             if 'image' in serializer.validated_data:
                 
@@ -123,8 +136,19 @@ def get_gemini_response(input_prompt, image):
 
 #Food Recipe Generator
 class FoodRecipeGeneratorView(APIView):
+    
+    permission_classes = [IsAuthenticated]
     def post(self,request):
-        serializer  = RecipeSerializer(data=request.data)
+        # Get the user Id of the authenticated User
+        user_id = request.user.id
+        
+        #Add the user ID to the request data
+        request_data = {
+            'user': user_id,
+            **request.data
+        }
+        
+        serializer  = RecipeSerializer(data=request_data)
         if serializer.is_valid(raise_exception=True):
             inputs = serializer.validated_data['recipes']
             input_prompt = """
@@ -136,13 +160,13 @@ class FoodRecipeGeneratorView(APIView):
                 
                 """
             
-            response = get_gemini_response(input_prompt,inputs)
+            response = get_gemini_recipe_response(input_prompt,inputs)
             serializer.save()
             return Response({'Response': response})
   
             
 # Function to Intigrate with gemini pro
-def get_gemini_response(input_prompt, ingredients_list):
+def get_gemini_recipe_response(input_prompt, ingredients_list):
     
     formatted_input = ", ".join(ingredients_list)
     #Functions to load Gemini Pro 
