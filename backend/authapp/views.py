@@ -7,6 +7,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import User
 from .serializer import UserSerializer
@@ -64,7 +65,22 @@ class LoginUserView(APIView):
             'refresh_token': tokens['refresh']
         }
         return response
-    
+  
+
+class ViewProfile(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # If the user is authenticated, request.user contains the authenticated user instance
+        user = request.user
+        serializer = UserSerializer(user)
+        
+        response_data = {
+            'username': serializer.data['first_name'],
+        }
+        
+        return Response(response_data)
+      
 class LogoutView(APIView):
     def post(self,request):
         response =Response()

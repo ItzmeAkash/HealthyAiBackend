@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework',
     'authapp',
@@ -46,6 +47,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,6 +57,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
+]
+
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
 ]
 
 AUTH_USER_MODEL = 'authapp.User'
@@ -154,11 +162,13 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
     
 }
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
