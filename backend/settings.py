@@ -101,17 +101,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'railway',
-#         'USER': 'postgres',
-#         'PASSWORD': 'UawEgmQtJsshHYQeRIXGXPkDfbldxtDF',
-#         'HOST': 'roundhouse.proxy.rlwy.net',
-#         'PORT': '59046',
-#     }
-# }
-
 DATABASES = {
     "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
