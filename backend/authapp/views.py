@@ -22,7 +22,7 @@ class UserRegisterView(APIView):
                 user.is_active = True
                 user.save()
 
-                return Response({'messages': 'Reguisteration Success'})
+                return Response({'messages': 'Registration Success'})
 
         except Exception as e:
             error_messages = str(e)
@@ -40,7 +40,7 @@ class UserRegisterView(APIView):
 
 class LoginUserView(APIView):
     def post(self, request):
-        # Check if 'email' and 'password' keys are present in request.data
+        
         if 'email' not in request.data or 'password' not in request.data:
             return Response({'message': 'Both email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -50,10 +50,10 @@ class LoginUserView(APIView):
         user = User.objects.filter(email=email).first()
 
         if user is None:
-            raise AuthenticationFailed('User not found')
+            return Response({'message': 'User not found'},status=status.HTTP_404_NOT_FOUND)
 
         if not user.check_password(password):
-            raise AuthenticationFailed('Incorrect password')
+            return Response({'message': 'Incorrect password.'}, status=status.HTTP_401_UNAUTHORIZED)
         
         tokens = user.token() 
 

@@ -161,11 +161,12 @@ class FoodRecipeGeneratorView(APIView):
                 """
             
             response = get_gemini_recipe_response(input_prompt,inputs)
+            
             serializer.save()
-            return Response({'Response': response})
+            return Response({'response':response})
   
             
-# Function to Intigrate with gemini pro
+# Function to Integrate with gemini pro
 def get_gemini_recipe_response(input_prompt, ingredients_list):
     
     formatted_input = ", ".join(ingredients_list)

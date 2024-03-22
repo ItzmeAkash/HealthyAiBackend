@@ -33,4 +33,3 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = RecipeModel
         fields = ('__all__')
         
-        
