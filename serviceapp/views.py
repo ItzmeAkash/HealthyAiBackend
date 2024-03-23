@@ -18,7 +18,7 @@ from io import BytesIO
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
-from PIL import Image
+from PIL  import Image
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -29,7 +29,7 @@ genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 
 # Load ML models during Django app initialization
 diet_model = joblib.load('serviceapp/PredictedModel/model.joblib')
-
+print(diet_model)
 # food_image_model = load_model('serviceapp/PredictedModel/foodimagemodel.h5')
 
 

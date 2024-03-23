@@ -167,3 +167,6 @@ media
 data
 PredictedModel
 .env
+bin/
+lib/
+*.sqlite3
