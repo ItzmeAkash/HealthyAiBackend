@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser,PermissionsMixin
 from .manager import UserManager
 from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
+
 # User Registeration  Model.
 class User(AbstractUser,PermissionsMixin):
     first_name = models.CharField(max_length=100, verbose_name = _("firstname"))

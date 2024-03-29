@@ -13,6 +13,7 @@ from .models import User
 from .serializer import UserSerializer
 
 
+# User Registration
 class UserRegisterView(APIView):
     def post(self, request):
         try:
@@ -37,7 +38,7 @@ class UserRegisterView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
    
-
+# Login User
 class LoginUserView(APIView):
     def post(self, request):
         
@@ -66,7 +67,7 @@ class LoginUserView(APIView):
         }
         return response
   
-
+# Profile View
 class ViewProfile(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -80,7 +81,8 @@ class ViewProfile(APIView):
         }
         
         return Response(response_data)
-      
+    
+#Logout  
 class LogoutView(APIView):
     def post(self,request):
         response =Response()

@@ -5,12 +5,14 @@ from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
+    # Email Validation
     def validate_email_address(self, email):
         try:
             validate_email(email)
         except ValidationError:
             raise ValueError(_("Please enter a valid email address"))
-        
+    
+    # Creating User
     def create_user(self, first_name,last_name, email, password, **extra_fields):
         
         if email:
@@ -25,7 +27,8 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-        
+    
+    # Create Super user
     def create_superuser(self, first_name,last_name, email, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)

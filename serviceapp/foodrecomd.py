@@ -1,15 +1,4 @@
-# import pandas as pd
-# import numpy as np
-# import joblib
 
-# #Diet Recommendation
-
-
-# # Load the model
-# model = joblib.load('model\model.joblib')
-
-# #load the dataset
-# df = pd.read_csv("data\diet_recommendation.csv") 
 class FoodRecommendation:
 
     PHYSICAL_ACTIVITY_FACTORS = {

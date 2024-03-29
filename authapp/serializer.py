@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
         
-       # Creating the User
+    # Creating the User
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         if password:
