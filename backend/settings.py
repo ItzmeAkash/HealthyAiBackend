@@ -68,10 +68,10 @@ MIDDLEWARE = [
 
 
 CORS_ALLOWED_ORIGINS = [
-    'https://nutripalate.vercel.app/',
+    'http://localhost:5173',
 ]
 
-
+# CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 AUTH_USER_MODEL = 'authapp.User'
@@ -99,26 +99,26 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 DATABASES = {
-    'default':{
-        'ENGINE': os.environ['ENGINE'],
-        'HOST': os.environ['HOST'],
-        'NAME': os.environ['NAME'],
-        'USER': os.environ['USER'],
-        'PASSWORD': os.environ['PASSWORD'],
-        'PORT': os.environ['PORT'],
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-database_url = os.environ.get("DATABASE_URL")
-DATABASES["default"] = dj_database_url.parse(database_url)
+
+
+# DATABASES = {
+#     'default':{
+#         'ENGINE': os.environ['ENGINE'],
+#         'HOST': os.environ['HOST'],
+#         'NAME': os.environ['NAME'],
+#         'USER': os.environ['USER'],
+#         'PASSWORD': os.environ['PASSWORD'],
+#         'PORT': os.environ['PORT'],
+#     }
+# }
+# database_url = os.environ.get("DATABASE_URL")
+# DATABASES["default"] = dj_database_url.parse(database_url)
 
 
 # Password validation
